@@ -1,46 +1,58 @@
-""" Игра 'Угадай число'
-Компьютер сам загадывает и угадывает число.
+"""Игра "Угадай число".
+Компьютер сам загадывает и сам угадывает число
 """
+
 import numpy as np
 
-
-def random_predict(number:int=1) -> int:
-    """ Рандомно угадываем число.
+def random_predict(number: int = np.random.randint(1, 101)) -> int:
+    """Рандомно угадываем число
 
     Args:
         number (int, optional): Загаданное число. Defaults to 1.
 
     Returns:
-        int: Число попыток.
+        int: Число попыток
     """
     count = 0
+
     while True:
         count += 1
-        predict_number = np.random.randint(1, 101)
-        if predict_number == number:
-            break       # выход из цикла, если угадали
+        predict_number = np.random.randint(1, 101)  # предполагаемое число
+        if number == predict_number:
+            break  # выход из цикла если угадали
     return count
 
 
-# Зачем нужен параметр random_predict, если функция работает и без него?
-def score_game(random_predict) -> int:
-    """ За какое количество попыток в среднем угадывает наш подход
+def fast_predict(number: int = np.random.randint(1, 101)) -> int:
+    left, right = 1, 100    # границы, в которых находится угадываемое число (будут сужаться)
+    count = 0               # счетчик попыток угадывания
+    while True:
+        count += 1
+        predict_number = 100 if ((left == 99) and (right == 100)) else (left + right) // 2    # предполагаемое число
+        if number < predict_number:
+            right = predict_number
+        elif number > predict_number:
+            left = predict_number
+        else:
+            break   # число number угадано с count-й попытки
+    return count
 
-    Args:
-        random_predict (_type_): функция угадывания
 
-    Returns:
-        int: среднее количество попыток
-    """
-    count_ls = []        # в этом списке будем сохранять количества попыток
-    np.random.seed(1)   # инициализируем ГСЧ каждый раз одинаково для воспроизводимости результата
-    random_array = np.random.randint(1, 101, size=1000)     # Загадаем 1000 чисел
-    for number in random_array:
-        count_ls.append(random_predict(number))
+def score_game(predict_func) -> int:
+    np.random.seed(1)  # фиксируем сид для воспроизводимости
+    array_size = 1000
+    random_array = list(np.random.randint(1, 101, size=(array_size)))  # список загаданных чисел
+
+    # Угадаем каждое загаданное число из random_array и запомним число попыток, за которое оно было угадано
+    count_ls = list(map(predict_func, random_array))
+
     score = int(np.mean(count_ls))
+    print(f"Размер выборки из загаданных чисел: {array_size}")
     print(f"Ваш алгоритм угадывает число в среднем за {score} попыток")
     return score
 
-# Если импортируем как библиотеку, этот вызов функции не исполняется
+
 if __name__ == "__main__":
-    score_game(random_predict)      # раз от раза показывается "в среднем за 101 попытку"
+    # RUN
+    # score_game(random_predict)
+    score_game(fast_predict)
