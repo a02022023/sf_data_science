@@ -24,6 +24,15 @@ def random_predict(number: int = np.random.randint(1, 101)) -> int:
 
 
 def fast_predict(number: int = np.random.randint(1, 101)) -> int:
+    """Угадываем число методом деления отрезка пополам.
+    Число от 1 до 100 угадывается максимум за 8 попыток. Среднее значение на 1000 запусках - 5 попыток.
+
+    Args:
+        number (int, optional): Загаданное число.
+
+    Returns:
+        int: Число попыток.
+    """
     left, right = 1, 100    # границы, в которых находится угадываемое число (будут сужаться)
     count = 0               # счетчик попыток угадывания
     while True:
@@ -39,6 +48,18 @@ def fast_predict(number: int = np.random.randint(1, 101)) -> int:
 
 
 def score_game(predict_func) -> int:
+    """Измеряем качество переданной "угадывательной функции" predict_func:
+    загадываем 1000 случайных чисел, 
+    угадываем их с помощью predict_func, 
+    и возвращаем среднее число попыток, за которое угадывается с помощью predict_func.
+
+    Args:
+        predict_func: Функция угадывания.
+
+    Returns:
+        int: Среднее число попыток, за которое одно число угадывается с помощью predict_func (при выборке из 1000 чисел).
+    """
+
     np.random.seed(1)  # фиксируем сид для воспроизводимости
     array_size = 1000
     random_array = list(np.random.randint(1, 101, size=(array_size)))  # список загаданных чисел
