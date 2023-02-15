@@ -54,7 +54,7 @@ def score_game(predict_func) -> int:
     и возвратим среднее число попыток, необходимое для угадывания числа с помощью predict_func.
 
     Args:
-        predict_func: Функция угадывания.
+        predict_func: Функция угадывания (random_predict или fast_predict).
 
     Returns:
         int: Среднее число попыток, за которое одно число угадывается с помощью predict_func (при выборке из 1000 чисел).
